@@ -1,0 +1,11 @@
+bladeProfile 	NACA;
+bladeThickness 	20;
+nBlades			3;
+bladeChord		0.14;
+bladeHeight		1.0;
+bladeMount		0.5; // As a fraction of chord
+shaft			true;
+shaftDiameter	0.095;
+shaftHeight		1.256;
+endTime			3.0;
+deltaT			0.1;
