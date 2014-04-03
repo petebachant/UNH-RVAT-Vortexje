@@ -1,0 +1,42 @@
+# Parameters for VAT simulation
+
+# Turbine parameters
+nBlades				3
+rotorRadius			0.5
+chordMount			0.3
+
+# Blade parameters
+nElemPerBlade		21
+nAirfoilPoints		32
+bladeProfileType 	NACA
+bladeThickness 		0.12
+rootChord			0.10
+tipChord			0.06
+rootPitch			40.0
+tipPitch			0.0
+rootCamber			0.0
+tipCamber			0.0
+
+# Tower parameters
+tower				true
+towerDiameter		0.06
+towerHeight			1.3
+
+# Simulation parameters
+freestreamVelocity	1.0
+tipSpeedRatio		3.5
+fluidDensity		1000.0
+endTime				1.0
+deltaT				0.01
+
+# VTK velocity field writer
+writeVelocityField	false
+xMin				1.0
+xMax				1.1
+deltaX				0.1
+yMin				-1.5
+yMax				1.5
+deltaY				0.05
+zMin				0.0
+zMax				0.625
+deltaZ				0.125
