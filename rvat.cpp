@@ -230,7 +230,7 @@ main (int argc, char **argv)
     int step_number = 0;
     
     solver.initialize_wakes(dt);
-    while (t < 3) {
+    while (t < 10) {
         // Solve:
         solver.solve(dt);
         
