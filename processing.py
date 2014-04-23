@@ -79,7 +79,7 @@ def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf
         plt.hlines(0.5, -1, 1, linestyles='solid', linewidth=2)
         plt.vlines(-1, 0, 0.5, linestyles='solid', linewidth=2)
         plt.vlines(1, 0, 0.5, linestyles='solid', linewidth=2)
-    if "meanu" or "all" in plotlist:
+    if "meanu" in plotlist or "all" in plotlist:
         plt.figure(figsize=(10,5))
         cs = plt.contourf(y/0.5, z, u, 20, cmap=plt.cm.coolwarm)
         plt.xlabel(r'$y/R$')
@@ -93,7 +93,7 @@ def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf
         ax.set_aspect(2)
         plt.grid(True)
         plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
-    if "meanv" or "all" in plotlist:
+    if "meanv" in plotlist or "all" in plotlist:
         plt.figure(figsize=(10,5))
         cs = plt.contourf(y/0.5, z, v, 20, cmap=plt.cm.coolwarm)
         plt.xlabel(r'$y/R$')
@@ -107,7 +107,7 @@ def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf
         ax.set_aspect(2)
         plt.grid(True)
         plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
-    if "v-wquiver" or "all" in plotlist:
+    if "v-wquiver" in plotlist or "all" in plotlist:
         # Make quiver plot of v and w velocities
         plt.figure(figsize=(10,5))
         Q = plt.quiver(y_R, z_H, v, w, angles='xy')
@@ -131,7 +131,7 @@ def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf
         plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
         if save:
             plt.savefig(savepath+'v-wquiver'+savetype)
-    if "xvorticity" or "all" in plotlist:
+    if "xvorticity" in plotlist or "all" in plotlist:
         dWdy = np.zeros(np.shape(u))
         dVdz = np.zeros(np.shape(u))
         for n in xrange(len(z)):
@@ -184,7 +184,7 @@ def perf(plot=True):
 
 def main():
     plt.close("all")
-    plotwake(plotlist=["all"], t1=3)
+    plotwake(plotlist=["v-wquiver"], t1=3)
 #    perf()
 
 if __name__ == "__main__":
