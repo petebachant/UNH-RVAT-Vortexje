@@ -153,6 +153,36 @@ def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf
         styleplot()
         if save:
             plt.savefig(savepath+'xvorticity'+savetype)
+    if "meancomboquiv" in plotlist or "all" in plotlist:
+        plt.figure(figsize=(10,6))
+        # Add contours of mean velocity
+        cs = plt.contourf(y_R, z_H, u, 20, cmap=plt.cm.coolwarm)
+        cb = plt.colorbar(cs, shrink=1, extend='both', 
+                          orientation='horizontal', pad=0.2)
+        cb.set_label(r'$U/U_{\infty}$')
+        plt.hold(True)
+        # Make quiver plot of v and w velocities
+        Q = plt.quiver(y_R, z_H, v, w, angles='xy', width=0.0022)
+        plt.xlabel(r'$y/R$')
+        plt.ylabel(r'$z/H$')
+        plt.ylim(-0.2, 0.78)
+        plt.xlim(-3.2, 3.2)
+        plt.quiverkey(Q, 0.75, 0.3, 0.1, r'$0.1 U_\infty$',
+                   labelpos='E',
+                   coordinates='figure',
+                   fontproperties={'size': 'small'})
+        plt.hlines(0.5, -1, 1, linestyles='solid', colors='gray',
+                   linewidth=3)
+        plt.vlines(-1, -0.2, 0.5, linestyles='solid', colors='gray',
+                   linewidth=3)
+        plt.vlines(1, -0.2, 0.5, linestyles='solid', colors='gray',
+                   linewidth=3)
+        ax = plt.axes()
+        ax.set_aspect(2)
+        plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
+        styleplot()
+        if save:
+            plt.savefig(savepath+"meancomboquiv"+savetype)
     plt.show()
     
 def perf(plot=True):
@@ -184,7 +214,7 @@ def perf(plot=True):
 
 def main():
     plt.close("all")
-    plotwake(plotlist=["v-wquiver"], t1=3)
+    plotwake(plotlist=["meancomboquiv", "xvorticity"], t1=3)
 #    perf()
 
 if __name__ == "__main__":
