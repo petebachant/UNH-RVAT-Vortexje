@@ -69,7 +69,7 @@ def calcwake(t1=1.5):
     meanw = meanw/i
     return y, z, meanu, meanv, meanw
     
-def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath=""):
+def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf"):
     # Plot contours of mean streamwise velocity
     y, z, u, v, w = calcwake(t1)
     y_R = y/R
