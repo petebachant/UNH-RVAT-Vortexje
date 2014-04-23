@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 import timeseries as ts
 from styleplot import styleplot
 
+R = 0.5
+H = 1.0
+U = 1.0
+
 def load_vtk(t):
     f = "rvat-log/velocity/"+str(t)+".vtk"
     reader = vtk.vtkDataSetReader()
@@ -41,7 +45,7 @@ def load_vtk(t):
                                                                     [u, v, w])
     return yarray, zarray, uarray, varray, warray
     
-def calcwake():
+def calcwake(t1=1.5):
     files = os.listdir("rvat-log/velocity")
     times = []
     for f in files:
@@ -51,7 +55,6 @@ def calcwake():
         except ValueError:
             times.append(float(t))
     times.sort()
-    t1 = 1.5
     i1 = times.index(t1)
     y, z, meanu, meanv, meanw = load_vtk(t1)
     i = 1
@@ -66,22 +69,49 @@ def calcwake():
     meanw = meanw/i
     return y, z, meanu, meanv, meanw
     
-def plotwake():
+def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath=""):
     # Plot contours of mean streamwise velocity
-    plt.figure(figsize=(10,5))
-    y, z, u, v, w = calcwake()
-    cs = plt.contourf(y/0.5, z, u, 20, cmap=plt.cm.coolwarm)
-    plt.xlabel(r'$y/R$')
-    plt.ylabel(r'$z/H$')
-    styleplot()
-    cb = plt.colorbar(cs, shrink=1, extend='both', 
-                      orientation='horizontal', pad=0.3)
-    cb.set_label(r'$U/U_{\infty}$')
-    #turb_lines()
-    ax = plt.axes()
-    ax.set_aspect(2)
-    plt.grid(True)
-    plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
+    y, z, u, v, w = calcwake(t1)
+    y_R = y/R
+    z_H = z/H
+    if "meanu" in plotlist:
+        plt.figure(figsize=(10,5))
+        cs = plt.contourf(y/0.5, z, u, 20, cmap=plt.cm.coolwarm)
+        plt.xlabel(r'$y/R$')
+        plt.ylabel(r'$z/H$')
+        styleplot()
+        cb = plt.colorbar(cs, shrink=1, extend='both', 
+                          orientation='horizontal', pad=0.3)
+        cb.set_label(r'$U/U_{\infty}$')
+        #turb_lines()
+        ax = plt.axes()
+        ax.set_aspect(2)
+        plt.grid(True)
+        plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
+    if "v-wquiver" in plotlist or "all" in plotlist:
+        # Make quiver plot of v and w velocities
+        plt.figure(figsize=(10,5))
+        Q = plt.quiver(y_R, z_H, v, w, angles='xy')
+        plt.xlabel(r'$y/R$')
+        plt.ylabel(r'$z/H$')
+        plt.ylim(-0.2, 0.78)
+        plt.xlim(-3.2, 3.2)
+        plt.quiverkey(Q, 0.75, 0.2, 0.1, r'$0.1$ m/s',
+                   labelpos='E',
+                   coordinates='figure',
+                   fontproperties={'size': 'small'})
+        plt.tight_layout()
+        plt.hlines(0.5, -1, 1, linestyles='solid', colors='r',
+                   linewidth=2)
+        plt.vlines(-1, -0.2, 0.5, linestyles='solid', colors='r',
+                   linewidth=2)
+        plt.vlines(1, -0.2, 0.5, linestyles='solid', colors='r',
+                   linewidth=2)
+        ax = plt.axes()
+        ax.set_aspect(2)
+        plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
+        if save:
+            plt.savefig(savepath+'v-wquiver'+savetype)
     plt.show()
     
 def perf(plot=True):
@@ -113,7 +143,7 @@ def perf(plot=True):
 
 def main():
     plt.close("all")
-    plotwake()
+    plotwake(plotlist=["v-wquiver"], t1=3)
 #    perf()
 
 if __name__ == "__main__":
