@@ -1,9 +1,5 @@
 //
-// Vortexje -- Simple VAWT example.
-//
-// Copyright (C) 2012 - 2014 Baayen & Heinz GmbH.
-//
-// Authors: Jorn Baayen <jorn.baayen@baayen-heinz.com>
+// Adapted from sample by Jorn Baayen <jorn.baayen@baayen-heinz.com>
 //
 
 #include <vortexje/solver.hpp>
