@@ -214,8 +214,8 @@ def perf(plot=True):
 
 def main():
     plt.close("all")
-    plotwake(plotlist=["meancomboquiv", "xvorticity"], t1=3)
-#    perf()
+#    plotwake(plotlist=["meancomboquiv", "xvorticity"], t1=3)
+    perf()
 
 if __name__ == "__main__":
     main()
