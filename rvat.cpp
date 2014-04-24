@@ -116,6 +116,43 @@ public:
     }
 };
 
+// Create a rectangular wall
+class Wall : public Surface
+{
+public:
+    // Constructor:
+    Wall(Vector3d node1, Vector3d node2, Vector3d node3, Vector3d node4)
+    { 
+        SurfaceBuilder surface_builder(*this);
+        
+        //const int n_points = 32;
+        //const int n_layers = 21;
+        
+        vector<int> prev_nodes;
+        
+        vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
+        //vector<Vector3d> points;
+        points.push_back(node1);
+        points.push_back(node2);
+        
+        vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points2;
+        points2.push_back(node3);
+        points2.push_back(node4);
+                 
+        vector<int> nodes = surface_builder.create_nodes_for_points(points);
+        vector<int> nodes2 = surface_builder.create_nodes_for_points(points2);
+            
+        vector<int> airfoil_panels = surface_builder.create_panels_between_shapes(nodes2, nodes);
+
+        surface_builder.finish();
+        
+        // Translate into the canonical coordinate system:
+        //Vector3d translation(0.0, 0.0, -h / 2.0);
+        //translate(translation);
+    }
+};
+
+
 class VAWT : public Body
 {
 public:
@@ -142,6 +179,14 @@ public:
         add_non_lifting_surface(*tower);
         
         allocated_surfaces.push_back(tower);
+        
+        Vector3d p1(0, 1, 0);
+        Vector3d p2(1, 1, 0);
+        Vector3d p3(1, 1, 1);
+        Vector3d p4(0, 1, 1);
+        Surface *wall = new Wall(p1, p2, p3, p4);
+        add_non_lifting_surface(*wall);
+        allocated_surfaces.push_back(wall);
 #endif
         
         // Initialize blades:
