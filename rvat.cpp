@@ -148,6 +148,21 @@ public:
     }
 };
 
+class Walls : public Body
+{
+public:
+    Walls(string   id) : Body(id)
+    {
+        Vector3d p1(0, 1, 0);
+        Vector3d p2(1, 1, 0);
+        Vector3d p3(1, 1, 1);
+        Vector3d p4(0, 1, 1);
+        Surface *wall = new Wall(p1, p2, p3, p4);
+        add_non_lifting_surface(*wall);
+        allocated_surfaces.push_back(wall);
+    } 
+};
+
 
 class VAWT : public Body
 {
@@ -175,14 +190,6 @@ public:
         add_non_lifting_surface(*tower);
         
         allocated_surfaces.push_back(tower);
-        
-        Vector3d p1(0, 1, 0);
-        Vector3d p2(1, 1, 0);
-        Vector3d p3(1, 1, 1);
-        Vector3d p4(0, 1, 1);
-        Surface *wall = new Wall(p1, p2, p3, p4);
-        add_non_lifting_surface(*wall);
-        allocated_surfaces.push_back(wall);
 #endif
         
         // Initialize blades:
@@ -234,10 +241,13 @@ main (int argc, char **argv)
               position,
               M_PI / 6.0,
               TIP_SPEED_RATIO * WIND_VELOCITY / MILL_RADIUS);
+              
+    Walls walls(string("walls"));
     
     // Set up solver:
     Solver solver("rvat-log");
     solver.add_body(vawt);
+    solver.add_body(walls);
     
     Vector3d freestream_velocity(WIND_VELOCITY, 0, 0);
     solver.set_freestream_velocity(freestream_velocity);
