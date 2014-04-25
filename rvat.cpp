@@ -124,8 +124,8 @@ public:
     { 
         SurfaceBuilder surface_builder(*this);
         
-        const int n_points = 32;
-        const int n_layers = 21;
+        const int n_points = 4;
+        const int n_layers = 4;
         
         vector<int> prev_nodes;
         
@@ -165,17 +165,55 @@ class Walls : public Body
 public:
     Walls(string   id) : Body(id)
     {
-        Vector3d start_point(-1, -1, -1);
-        int span_direction = 1; // Span in the y direction
-        double span_length = 2.0;
         double extrude_length = 4.0;
         
-        Surface *wall = new Wall(start_point,
-                                 span_direction,
-                                 span_length,
-                                 extrude_length);
-        add_non_lifting_surface(*wall);
-        allocated_surfaces.push_back(wall);
+        // Create floor
+        Vector3d start_point(-2, -1.83, -1.22);
+        int span_direction = 1; // Span in the y direction (a floor)
+        double span_length = 3.66;
+        
+        Surface *floor = new Wall(start_point,
+                                  span_direction,
+                                  span_length,
+                                  extrude_length);
+        add_non_lifting_surface(*floor);
+        allocated_surfaces.push_back(floor);
+        
+        // Create top
+        start_point(2) = 1.22;
+        span_direction = 1; // Span in the y direction (a floor)
+        span_length = 3.66;
+        
+        Surface *top = new Wall(start_point,
+                                span_direction,
+                                span_length,
+                                extrude_length);
+        add_non_lifting_surface(*top);
+        allocated_surfaces.push_back(top);
+        
+        // Create right wall (looking downstream)
+        start_point(2) = -1.22;
+        span_direction = 2; // Span in the z direction
+        span_length = 2.44;
+        
+        Surface *rightwall = new Wall(start_point,
+                                      span_direction,
+                                      span_length,
+                                      extrude_length);
+        add_non_lifting_surface(*rightwall);
+        allocated_surfaces.push_back(rightwall);
+        
+        // Create left wall (looking downstream)
+        start_point(1) = 1.83;
+        span_direction = 2; // Span in the z direction
+        span_length = 2.44;
+        
+        Surface *leftwall = new Wall(start_point,
+                                     span_direction,
+                                     span_length,
+                                     extrude_length);
+        add_non_lifting_surface(*leftwall);
+        allocated_surfaces.push_back(leftwall);
     } 
 };
 
@@ -251,7 +289,7 @@ main (int argc, char **argv)
     // Set up VAWT:
     Vector3d position(0, 0, 0);
     
-    VAWT vawt(string("rvat"),
+    VAWT vawt(string("turbine"),
               MILL_RADIUS,
               N_BLADES,
               position,
