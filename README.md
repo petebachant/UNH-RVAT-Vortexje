@@ -9,4 +9,4 @@ Running
 
 Visualizing results
 -------------------
-Execute `pv-rvat`
+Execute `pv`
