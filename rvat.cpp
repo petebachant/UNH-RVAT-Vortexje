@@ -134,9 +134,10 @@ public:
             
             // Create points along line
             vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
-            points.push_back(start_point);
             for (int n = 0; n < n_points; n++){
-                points[n](span_direction) += n * span_length / (double) (n_points - 1);
+                Vector3d point = start_point;
+                point(span_direction) += n * span_length / (double) (n_points - 1);
+                points.push_back(point);
             }
                 
             // Move points along extrude direction (x)
