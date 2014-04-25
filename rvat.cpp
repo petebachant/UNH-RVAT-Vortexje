@@ -112,33 +112,44 @@ public:
     }
 };
 
-// Create a rectangular wall
+// Create a rectangular wall, extruded along x direction
 class Wall : public Surface
 {
 public:
     // Constructor:
-    Wall(Vector3d node1, Vector3d node2, Vector3d node3, Vector3d node4)
+    Wall(Vector3d start_point,
+         int span_direction, 
+         double span_length,
+         double extrude_length)
     { 
         SurfaceBuilder surface_builder(*this);
         
-        //const int n_points = 32;
-        //const int n_layers = 21;
+        const int n_points = 32;
+        const int n_layers = 21;
         
         vector<int> prev_nodes;
         
-        vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
-        //vector<Vector3d> points;
-        points.push_back(node1);
-        points.push_back(node2);
-        
-        vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points2;
-        points2.push_back(node3);
-        points2.push_back(node4);
-                 
-        vector<int> nodes = surface_builder.create_nodes_for_points(points);
-        vector<int> nodes2 = surface_builder.create_nodes_for_points(points2);
+        // Loop through and move points along extrude direction
+        for (int i = 0; i < n_layers; i++) {
             
-        vector<int> airfoil_panels = surface_builder.create_panels_between_shapes(nodes2, nodes);
+            // Create points along line
+            vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
+            points.push_back(start_point);
+            for (int n = 0; n < n_points; n++){
+                points[n](span_direction) += n * span_length / (double) (n_points - 1);
+            }
+                
+            // Move points along extrude direction
+            for (int j = 0; j < (int) points.size(); j++)
+                points[j](2) += i * extrude_length / (double) (n_layers - 1);
+                 
+            vector<int> nodes = surface_builder.create_nodes_for_points(points);
+            
+            if (i > 0)
+                vector<int> airfoil_panels = surface_builder.create_panels_between_shapes(nodes, prev_nodes);
+                
+            prev_nodes = nodes;
+        }
 
         surface_builder.finish();
         
@@ -153,11 +164,15 @@ class Walls : public Body
 public:
     Walls(string   id) : Body(id)
     {
-        Vector3d p1(0, 1, 0);
-        Vector3d p2(1, 1, 0);
-        Vector3d p3(1, 1, 1);
-        Vector3d p4(0, 1, 1);
-        Surface *wall = new Wall(p1, p2, p3, p4);
+        Vector3d start_point(-1, -1, -1);
+        int span_direction = 1; // Span in the y direction
+        double span_length = 2.0;
+        double extrude_length = 4.0;
+        
+        Surface *wall = new Wall(start_point,
+                                 span_direction,
+                                 span_length,
+                                 extrude_length);
         add_non_lifting_surface(*wall);
         allocated_surfaces.push_back(wall);
     } 
