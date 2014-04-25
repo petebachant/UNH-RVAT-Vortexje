@@ -139,9 +139,9 @@ public:
                 points[n](span_direction) += n * span_length / (double) (n_points - 1);
             }
                 
-            // Move points along extrude direction
+            // Move points along extrude direction (x)
             for (int j = 0; j < (int) points.size(); j++)
-                points[j](2) += i * extrude_length / (double) (n_layers - 1);
+                points[j](0) += i * extrude_length / (double) (n_layers - 1);
                  
             vector<int> nodes = surface_builder.create_nodes_for_points(points);
             
