@@ -172,7 +172,7 @@ public:
         SurfaceBuilder surface_builder(*this);
         
         const int n_points = 10;
-        const int n_layers = 10;
+        const int n_layers = 6;
         
         const double min_x = -1.5;
         
