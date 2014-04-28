@@ -160,6 +160,81 @@ public:
     }
 };
 
+// Create a rectangular wall, extruded along x direction
+class RectangularTube : public Surface
+{
+public:
+    // Constructor:
+    RectangularTube(double height,
+                    double width,
+                    double extrude_length)
+    { 
+        SurfaceBuilder surface_builder(*this);
+        
+        const int n_points = 4;
+        const int n_layers = 4;
+        
+        Vector3d start_point(-1.5, -width/2, -height/2);
+        
+        vector<int> prev_nodes;
+        
+        // Loop through and move points along extrude direction
+        for (int i = 0; i < n_layers; i++) {
+            
+            // Create points vector
+            vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
+            
+            // First horizontal line
+            for (int n = 0; n < n_points; n++){
+                Vector3d point = start_point;
+                point(1) += n * width / (double) (n_points - 1);
+                points.push_back(point);
+            }
+            
+            // First vertical line
+            start_point(1) = width/2;
+            for (int n = 0; n < n_points; n++){
+                Vector3d point = start_point;
+                point(2) += n * height / (double) (n_points - 1);
+                points.push_back(point);
+            }
+            
+            // Second horizontal line
+            start_point(2) = height/2;
+            for (int n = 0; n < n_points; n++){
+                Vector3d point = start_point;
+                point(1) -= n * width / (double) (n_points - 1);
+                points.push_back(point);
+            }
+            
+            // Second vertical line
+            start_point(1) = -width/2;
+            for (int n = 0; n < n_points; n++){
+                Vector3d point = start_point;
+                point(2) -= n * height / (double) (n_points - 1);
+                points.push_back(point);
+            }
+                
+            // Move points along extrude direction (x)
+            for (int j = 0; j < (int) points.size(); j++)
+                points[j](0) += i * extrude_length / (double) (n_layers - 1);
+                 
+            vector<int> nodes = surface_builder.create_nodes_for_points(points);
+            
+            if (i > 0)
+                vector<int> airfoil_panels = surface_builder.create_panels_between_shapes(nodes, prev_nodes);
+                
+            prev_nodes = nodes;
+        }
+
+        surface_builder.finish();
+        
+        // Translate into the canonical coordinate system:
+        //Vector3d translation(0.0, 0.0, -h / 2.0);
+        //translate(translation);
+    }
+};
+
 class Walls : public Body
 {
 public:
