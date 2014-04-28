@@ -171,10 +171,10 @@ public:
     { 
         SurfaceBuilder surface_builder(*this);
         
-        const int n_points = 4;
-        const int n_layers = 4;
+        const int n_points = 10;
+        const int n_layers = 10;
         
-        Vector3d start_point(-1.5, -width/2, -height/2);
+        const double min_x = -1.5;
         
         vector<int> prev_nodes;
         
@@ -184,33 +184,30 @@ public:
             // Create points vector
             vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
             
-            // First horizontal line
-            for (int n = 0; n < n_points; n++){
-                Vector3d point = start_point;
+            // Lower horizontal line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, -width/2, -height/2);
                 point(1) += n * width / (double) (n_points - 1);
                 points.push_back(point);
             }
             
-            // First vertical line
-            start_point(1) = width/2;
-            for (int n = 0; n < n_points; n++){
-                Vector3d point = start_point;
+            // -y side vertical line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, width/2, -height/2);
                 point(2) += n * height / (double) (n_points - 1);
                 points.push_back(point);
             }
             
-            // Second horizontal line
-            start_point(2) = height/2;
-            for (int n = 0; n < n_points; n++){
-                Vector3d point = start_point;
+            // Upper horizontal line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, width/2, height/2);
                 point(1) -= n * width / (double) (n_points - 1);
                 points.push_back(point);
             }
             
-            // Second vertical line
-            start_point(1) = -width/2;
-            for (int n = 0; n < n_points; n++){
-                Vector3d point = start_point;
+            // +y side vertical line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, -width/2, height/2);
                 point(2) -= n * height / (double) (n_points - 1);
                 points.push_back(point);
             }
@@ -241,54 +238,14 @@ public:
     Walls(string   id) : Body(id)
     {
         double extrude_length = 4.0;
+        double height = 2.44;
+        double width = 3.66;
         
-        // Create floor
-        Vector3d start_point(-2, -1.83, -1.22);
-        int span_direction = 1; // Span in the y direction (a floor)
-        double span_length = 3.66;
-        
-        Surface *floor = new Wall(start_point,
-                                  span_direction,
-                                  span_length,
-                                  extrude_length);
-        add_non_lifting_surface(*floor);
-        allocated_surfaces.push_back(floor);
-        
-        // Create top
-        start_point(2) = 1.22;
-        span_direction = 1; // Span in the y direction (a floor)
-        span_length = 3.66;
-        
-        Surface *top = new Wall(start_point,
-                                span_direction,
-                                span_length,
-                                extrude_length);
-        add_non_lifting_surface(*top);
-        allocated_surfaces.push_back(top);
-        
-        // Create right wall (looking downstream)
-        start_point(2) = -1.22;
-        span_direction = 2; // Span in the z direction
-        span_length = 2.44;
-        
-        Surface *rightwall = new Wall(start_point,
-                                      span_direction,
-                                      span_length,
-                                      extrude_length);
-        add_non_lifting_surface(*rightwall);
-        allocated_surfaces.push_back(rightwall);
-        
-        // Create left wall (looking downstream)
-        start_point(1) = 1.83;
-        span_direction = 2; // Span in the z direction
-        span_length = 2.44;
-        
-        Surface *leftwall = new Wall(start_point,
-                                     span_direction,
-                                     span_length,
-                                     extrude_length);
-        add_non_lifting_surface(*leftwall);
-        allocated_surfaces.push_back(leftwall);
+        Surface *tube = new RectangularTube(height,
+                                            width,
+									        extrude_length);
+        add_non_lifting_surface(*tube);
+        allocated_surfaces.push_back(tube);
     } 
 };
 
