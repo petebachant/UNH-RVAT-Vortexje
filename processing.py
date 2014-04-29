@@ -61,7 +61,7 @@ def calcwake(t1=1.5, case="free"):
     i = 1
     for t in times[i1+1:]:
         i += 1
-        y, z, u, v, w = load_vtk(t)
+        y, z, u, v, w = load_vtk(t, case=case)
         meanu += u
         meanv += v
         meanw += w
@@ -215,7 +215,7 @@ def perf(case="free", plot=True):
 
 def main():
     plt.close("all")
-    plotwake(plotlist=["meancomboquiv"], t1=3)
+    plotwake(plotlist=["meancomboquiv"], t1=3, case="free-0")
 #    perf()
 
 if __name__ == "__main__":
