@@ -24,6 +24,14 @@ using namespace Vortexje;
 #define TIP_SPEED_RATIO 1.9
 #define WIND_VELOCITY   1.0
 #define INCLUDE_TOWER
+#define INCLUDE_WALLS
+#define END_TIME		4.0
+
+#ifdef INCLUDE_WALLS
+    string save_dir("rvat-log-walls");
+#else
+    string save_dir("rvat-log-free");
+#endif
 
 class Blade : public LiftingSurface
 {
@@ -35,7 +43,7 @@ public:
         LiftingSurfaceBuilder surface_builder(*this);
         
         const int n_points_per_airfoil = 32;
-        const int n_airfoils = 21;
+        const int n_airfoils = 21; // Was 21
         
         const double chord = 0.14;
         const double span = 1.0;
@@ -85,8 +93,8 @@ public:
         const double r = 0.095/2;
         const double h = 1.256;
         
-        const int n_points = 32;
-        const int n_layers = 21;
+        const int n_points = 32; // was 32
+        const int n_layers = 21; // was 21
         
         vector<int> prev_nodes;
         
@@ -111,6 +119,144 @@ public:
         translate(translation);
     }
 };
+
+// Create a rectangular wall, extruded along x direction
+class Wall : public Surface
+{
+public:
+    // Constructor:
+    Wall(Vector3d start_point,
+         int span_direction, 
+         double span_length,
+         double extrude_length)
+    { 
+        SurfaceBuilder surface_builder(*this);
+        
+        const int n_points = 4;
+        const int n_layers = 4;
+        
+        vector<int> prev_nodes;
+        
+        // Loop through and move points along extrude direction
+        for (int i = 0; i < n_layers; i++) {
+            
+            // Create points along line
+            vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
+            for (int n = 0; n < n_points; n++){
+                Vector3d point = start_point;
+                point(span_direction) += n * span_length / (double) (n_points - 1);
+                points.push_back(point);
+            }
+                
+            // Move points along extrude direction (x)
+            for (int j = 0; j < (int) points.size(); j++)
+                points[j](0) += i * extrude_length / (double) (n_layers - 1);
+                 
+            vector<int> nodes = surface_builder.create_nodes_for_points(points);
+            
+            if (i > 0)
+                vector<int> airfoil_panels = surface_builder.create_panels_between_shapes(nodes, prev_nodes);
+                
+            prev_nodes = nodes;
+        }
+
+        surface_builder.finish();
+        
+        // Translate into the canonical coordinate system:
+        //Vector3d translation(0.0, 0.0, -h / 2.0);
+        //translate(translation);
+    }
+};
+
+// Create a rectangular wall, extruded along x direction
+class RectangularTube : public Surface
+{
+public:
+    // Constructor:
+    RectangularTube(double height,
+                    double width,
+                    double extrude_length)
+    { 
+        SurfaceBuilder surface_builder(*this);
+        
+        const int n_points = 16;
+        const int n_layers = 16;
+        
+        const double min_x = -2.0;
+        
+        vector<int> prev_nodes;
+        
+        // Loop through and move points along extrude direction
+        for (int i = 0; i < n_layers; i++) {
+            
+            // Create points vector
+            vector<Vector3d, Eigen::aligned_allocator<Vector3d> > points;
+            
+            // Lower horizontal line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, -width/2, -height/2);
+                point(1) += n * width / (double) (n_points - 1);
+                points.push_back(point);
+            }
+            
+            // -y side vertical line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, width/2, -height/2);
+                point(2) += n * height / (double) (n_points - 1);
+                points.push_back(point);
+            }
+            
+            // Upper horizontal line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, width/2, height/2);
+                point(1) -= n * width / (double) (n_points - 1);
+                points.push_back(point);
+            }
+            
+            // +y side vertical line
+            for (int n = 0; n < n_points - 1; n++){
+                Vector3d point(min_x, -width/2, height/2);
+                point(2) -= n * height / (double) (n_points - 1);
+                points.push_back(point);
+            }
+                
+            // Move points along extrude direction (x)
+            for (int j = 0; j < (int) points.size(); j++)
+                points[j](0) += i * extrude_length / (double) (n_layers - 1);
+                 
+            vector<int> nodes = surface_builder.create_nodes_for_points(points);
+            
+            if (i > 0)
+                vector<int> airfoil_panels = surface_builder.create_panels_between_shapes(nodes, prev_nodes);
+                
+            prev_nodes = nodes;
+        }
+
+        surface_builder.finish();
+        
+        // Translate into the canonical coordinate system:
+        //Vector3d translation(0.0, 0.0, -h / 2.0);
+        //translate(translation);
+    }
+};
+
+class Walls : public Body
+{
+public:
+    Walls(string   id) : Body(id)
+    {
+        double extrude_length = 6.0;
+        double height = 2.44;
+        double width = 3.66;
+        
+        Surface *tube = new RectangularTube(height,
+                                            width,
+									        extrude_length);
+        add_non_lifting_surface(*tube);
+        allocated_surfaces.push_back(tube);
+    } 
+};
+
 
 class VAWT : public Body
 {
@@ -183,7 +329,7 @@ main (int argc, char **argv)
     // Set up VAWT:
     Vector3d position(0, 0, 0);
     
-    VAWT vawt(string("rvat"),
+    VAWT vawt(string("turbine"),
               MILL_RADIUS,
               N_BLADES,
               position,
@@ -191,8 +337,14 @@ main (int argc, char **argv)
               TIP_SPEED_RATIO * WIND_VELOCITY / MILL_RADIUS);
     
     // Set up solver:
-    Solver solver("rvat-log");
+    Solver solver(save_dir);
     solver.add_body(vawt);
+    
+    // Include walls if defined
+#ifdef INCLUDE_WALLS
+    Walls walls(string("walls"));
+    solver.add_body(walls);
+#endif
     
     Vector3d freestream_velocity(WIND_VELOCITY, 0, 0);
     solver.set_freestream_velocity(freestream_velocity);
@@ -214,11 +366,13 @@ main (int argc, char **argv)
     double x_max = 1.1; 
     double y_max = 1.5; 
     double z_max = 0.625;
-    mkdir("rvat-log/velocity", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    string save_subdir = save_dir + string("/velocity");
+    mkdir(save_subdir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     
     // Log shaft moments:
     ofstream f;
-    f.open("rvat-log/performance.txt");
+    save_subdir = save_dir + string("/performance.txt");
+    f.open(save_subdir.c_str());
     
     // Run simulation:
     double t = 0.0;
@@ -226,7 +380,7 @@ main (int argc, char **argv)
     int step_number = 0;
     
     solver.initialize_wakes(dt);
-    while (t < 10) {
+    while (t < END_TIME) {
         // Solve:
         solver.solve(dt);
         
@@ -243,7 +397,7 @@ main (int argc, char **argv)
         
         // Write velocity field:
         stringstream velfilename;
-        velfilename << "rvat-log/velocity/" << t << ".vtk";
+        velfilename << save_dir << "/velocity/" << t << ".vtk";
         field_writer.write_velocity_field(solver, velfilename.str(), 
                                           x_min, x_max,
                                           y_min, y_max,
