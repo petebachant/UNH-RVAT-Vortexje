@@ -24,7 +24,14 @@ using namespace Vortexje;
 #define TIP_SPEED_RATIO 1.9
 #define WIND_VELOCITY   1.0
 #define INCLUDE_TOWER
+#define INCLUDE_WALLS
 #define END_TIME		4.0
+
+#ifdef INCLUDE_WALLS
+    string save_dir("rvat-log-walls");
+#else
+    string save_dir("rvat-log-free");
+#endif
 
 class Blade : public LiftingSurface
 {
@@ -328,13 +335,16 @@ main (int argc, char **argv)
               position,
               M_PI / 6.0,
               TIP_SPEED_RATIO * WIND_VELOCITY / MILL_RADIUS);
-              
-    Walls walls(string("walls"));
     
     // Set up solver:
-    Solver solver("rvat-log");
+    Solver solver(save_dir);
     solver.add_body(vawt);
+    
+    // Include walls if defined
+#ifdef INCLUDE_WALLS
+    Walls walls(string("walls"));
     solver.add_body(walls);
+#endif
     
     Vector3d freestream_velocity(WIND_VELOCITY, 0, 0);
     solver.set_freestream_velocity(freestream_velocity);
@@ -356,11 +366,13 @@ main (int argc, char **argv)
     double x_max = 1.1; 
     double y_max = 1.5; 
     double z_max = 0.625;
-    mkdir("rvat-log/velocity", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    string save_subdir = save_dir + string("/velocity");
+    mkdir(save_subdir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     
     // Log shaft moments:
     ofstream f;
-    f.open("rvat-log/performance.txt");
+    save_subdir = save_dir + string("/performance.txt");
+    f.open(save_subdir.c_str());
     
     // Run simulation:
     double t = 0.0;
