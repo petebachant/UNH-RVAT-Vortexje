@@ -24,6 +24,7 @@ using namespace Vortexje;
 #define TIP_SPEED_RATIO 1.9
 #define WIND_VELOCITY   1.0
 #define INCLUDE_TOWER
+#define END_TIME		4.0
 
 class Blade : public LiftingSurface
 {
@@ -367,7 +368,7 @@ main (int argc, char **argv)
     int step_number = 0;
     
     solver.initialize_wakes(dt);
-    while (t < 10) {
+    while (t < END_TIME) {
         // Solve:
         solver.solve(dt);
         
