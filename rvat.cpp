@@ -397,7 +397,7 @@ main (int argc, char **argv)
         
         // Write velocity field:
         stringstream velfilename;
-        velfilename << "rvat-log/velocity/" << t << ".vtk";
+        velfilename << save_dir << "/velocity/" << t << ".vtk";
         field_writer.write_velocity_field(solver, velfilename.str(), 
                                           x_min, x_max,
                                           y_min, y_max,
