@@ -35,7 +35,7 @@ public:
         LiftingSurfaceBuilder surface_builder(*this);
         
         const int n_points_per_airfoil = 32;
-        const int n_airfoils = 10; // Was 21
+        const int n_airfoils = 21; // Was 21
         
         const double chord = 0.14;
         const double span = 1.0;
@@ -86,7 +86,7 @@ public:
         const double h = 1.256;
         
         const int n_points = 32; // was 32
-        const int n_layers = 10; // was 21
+        const int n_layers = 21; // was 21
         
         vector<int> prev_nodes;
         
@@ -171,10 +171,10 @@ public:
     { 
         SurfaceBuilder surface_builder(*this);
         
-        const int n_points = 10;
-        const int n_layers = 6;
+        const int n_points = 16;
+        const int n_layers = 16;
         
-        const double min_x = -1.5;
+        const double min_x = -2.0;
         
         vector<int> prev_nodes;
         
@@ -237,7 +237,7 @@ class Walls : public Body
 public:
     Walls(string   id) : Body(id)
     {
-        double extrude_length = 4.0;
+        double extrude_length = 6.0;
         double height = 2.44;
         double width = 3.66;
         
