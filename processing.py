@@ -12,8 +12,8 @@ R = 0.5
 H = 1.0
 U = 1.0
 
-def load_vtk(t):
-    f = "rvat-log/velocity/"+str(t)+".vtk"
+def load_vtk(t, case="free"):
+    f = "rvat-log-" + case + "/velocity/"+str(t)+".vtk"
     reader = vtk.vtkDataSetReader()
     reader.SetFileName(f)
     reader.Update()
@@ -46,8 +46,8 @@ def load_vtk(t):
                                                                     [u, v, w])
     return yarray, zarray, uarray, varray, warray
     
-def calcwake(t1=1.5):
-    files = os.listdir("rvat-log/velocity")
+def calcwake(t1=1.5, case="free"):
+    files = os.listdir("rvat-log-" + case + "/velocity")
     times = []
     for f in files:
         t = f.replace(".vtk", "")
@@ -57,7 +57,7 @@ def calcwake(t1=1.5):
             times.append(float(t))
     times.sort()
     i1 = times.index(t1)
-    y, z, meanu, meanv, meanw = load_vtk(t1)
+    y, z, meanu, meanv, meanw = load_vtk(t1, case=case)
     i = 1
     for t in times[i1+1:]:
         i += 1
@@ -70,9 +70,10 @@ def calcwake(t1=1.5):
     meanw = meanw/i
     return y, z, meanu, meanv, meanw
     
-def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf"):
+def plotwake(plotlist=["meanu"], t1=1.5, case="free", save=False, 
+             savepath="", savetype=".pdf"):
     # Plot contours of mean streamwise velocity
-    y, z, u, v, w = calcwake(t1)
+    y, z, u, v, w = calcwake(t1=t1, case=case)
     y_R = y/R
     z_H = z/H
     def turb_lines():
@@ -185,8 +186,8 @@ def plotwake(plotlist=["meanu"], t1=1.5, save=False, savepath="", savetype=".pdf
             plt.savefig(savepath+"meancomboquiv"+savetype)
     plt.show()
     
-def perf(plot=True):
-    t, cp = np.loadtxt("rvat-log/performance.txt", unpack=True)
+def perf(case="free", plot=True):
+    t, cp = np.loadtxt("rvat-log-" + case + "/performance.txt", unpack=True)
     with open("rvat.cpp") as f:
         for line in f.readlines():
             line = line.split()
@@ -214,8 +215,8 @@ def perf(plot=True):
 
 def main():
     plt.close("all")
-#    plotwake(plotlist=["meancomboquiv", "xvorticity"], t1=3)
-    perf()
+    plotwake(plotlist=["meancomboquiv"], t1=3)
+#    perf()
 
 if __name__ == "__main__":
     main()
