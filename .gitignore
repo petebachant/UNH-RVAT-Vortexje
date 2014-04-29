@@ -1,4 +1,4 @@
-rvat-log/
+rvat-log*
 *.vtk
 rvat
 CMakeFiles/
