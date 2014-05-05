@@ -4,7 +4,7 @@ from __future__ import division, print_function
 import numpy as np
 import matplotlib.pyplot as plt
 
-t, cp = np.loadtxt("rvat-log/performance.txt", unpack=True)
+t, cp = np.loadtxt("rvat-log-walls/performance.txt", unpack=True)
 
 with open("rvat.cpp") as f:
     for line in f.readlines():

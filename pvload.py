@@ -9,7 +9,7 @@ except ImportError:
     pvloaded = False
 
 for f in ["turbine", "walls"]:
-    wd = "rvat-log/" + f
+    wd = "rvat-log-walls/" + f
     folders = sorted(os.listdir(wd))
 
     for folder in folders:
