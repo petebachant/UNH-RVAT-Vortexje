@@ -43,7 +43,7 @@ public:
         LiftingSurfaceBuilder surface_builder(*this);
         
         const int n_points_per_airfoil = 32;
-        const int n_airfoils = 21; // Was 21
+        const int n_airfoils = 16; // Was 21
         
         const double chord = 0.14;
         const double span = 1.0;
@@ -94,7 +94,7 @@ public:
         const double h = 1.256;
         
         const int n_points = 32; // was 32
-        const int n_layers = 21; // was 21
+        const int n_layers = 16; // was 21
         
         vector<int> prev_nodes;
         
@@ -175,14 +175,15 @@ public:
     // Constructor:
     RectangularTube(double height,
                     double width,
-                    double extrude_length)
+                    double extrude_length,
+                    bool external_flow = true)
     { 
         SurfaceBuilder surface_builder(*this);
         
-        const int n_points = 16;
-        const int n_layers = 16;
+        const int n_points = 12;
+        const int n_layers = 12;
         
-        const double min_x = -2.0;
+        const double min_x = -3.0;
         
         vector<int> prev_nodes;
         
@@ -238,8 +239,9 @@ public:
         //Vector3d translation(0.0, 0.0, -h / 2.0);
         //translate(translation);
         
-        // Flip normals:
-        flip_normals();
+        // Flip normals if external_flow is false:
+        if (external_flow == false)
+            flip_normals();
     }
 };
 
@@ -248,15 +250,23 @@ class Walls : public Body
 public:
     Walls(string   id) : Body(id)
     {
-        double extrude_length = 6.0;
+        double extrude_length = 10.0;
         double height = 2.44;
         double width = 3.66;
         
         Surface *tube = new RectangularTube(height,
                                             width,
-									        extrude_length);
+									        extrude_length,
+                                            true);
         add_non_lifting_surface(*tube);
         allocated_surfaces.push_back(tube);
+        /*
+        Surface *tube_outer = new RectangularTube(height*1.1,
+                                                  width*1.1,
+									              extrude_length,
+                                                  true);
+        add_non_lifting_surface(*tube_outer);
+        allocated_surfaces.push_back(tube_outer);*/
     } 
 };
 
