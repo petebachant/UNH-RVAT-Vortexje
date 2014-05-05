@@ -237,6 +237,9 @@ public:
         // Translate into the canonical coordinate system:
         //Vector3d translation(0.0, 0.0, -h / 2.0);
         //translate(translation);
+        
+        // Flip normals:
+        flip_normals();
     }
 };
 
@@ -358,14 +361,14 @@ main (int argc, char **argv)
     // Set up velocity field writer
     VTKFieldWriter field_writer;
     double dx = 0.1;
-    double dy = 0.05;
-    double dz = 0.125;
+    double dy = 0.1;
+    double dz = 0.1;
     double x_min = 1.0; 
-    double y_min = -1.5; 
-    double z_min = 0;
+    double y_min = -1.9; 
+    double z_min = -1.3;
     double x_max = 1.1; 
-    double y_max = 1.5; 
-    double z_max = 0.625;
+    double y_max = 1.9; 
+    double z_max = 1.3;
     string save_subdir = save_dir + string("/velocity");
     mkdir(save_subdir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     
