@@ -8,10 +8,11 @@ try:
 except ImportError:
     pvloaded = False
 
-for f in ["turbine", "walls"]:
-    wd = "rvat-log-walls/" + f
-    folders = sorted(os.listdir(wd))
+casename = "walls"
 
+for f in ["turbine", "walls"]:
+    wd = "rvat-log-" + casename + "/" + f
+    folders = sorted(os.listdir(wd))
     for folder in folders:
         files = os.listdir(wd + "/" + folder)
         files = sorted([int((file.replace("step_", "").split(".")[0])) for file in files])
@@ -20,4 +21,19 @@ for f in ["turbine", "walls"]:
             OpenDataFile([wd+"/"+folder+"/"+file for file in files])
             RenameSource(folder)
         else: print(files)
-        
+
+# Load velocity
+if os.path.isdir("rvat-log-" + casename + "/velocity"):
+    wd = "rvat-log-" + casename + "/velocity"
+    files = os.listdir(wd)
+    filesn = []
+    for f in files:
+        try:
+            filesn.append(int(f.replace(".vtk", "")))
+        except ValueError:
+            filesn.append(float(f.replace(".vtk", "")))
+    files = [str(file)+".vtk" for file in sorted(filesn)]
+    if pvloaded:
+        OpenDataFile([wd+"/"+file for file in files])
+        RenameSource("velocity")
+    else: print(files)

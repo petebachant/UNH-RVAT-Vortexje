@@ -225,7 +225,7 @@ def main():
         p = "C:/Users/Pete/" + p
     plt.close("all")
     
-    plotwake(plotlist=["meancomboquiv"], t1=3, case="walls", 
+    plotwake(plotlist=["meancomboquiv"], t1=0, case="walls", 
              save=False, savepath=p)
 #    perf()
 
