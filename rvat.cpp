@@ -25,7 +25,7 @@ using namespace Vortexje;
 #define WIND_VELOCITY   1.0
 #define INCLUDE_TOWER
 #define INCLUDE_WALLS
-#define END_TIME		4.0
+#define END_TIME		6.0
 
 #ifdef INCLUDE_WALLS
     string save_dir("rvat-log-walls");
@@ -371,8 +371,8 @@ main (int argc, char **argv)
     // Set up velocity field writer
     VTKFieldWriter field_writer;
     int nx = 1;
-    int ny = 21;
-    int nz = 11;
+    int ny = 41;
+    int nz = 21;
     double x_min = 1.0; 
     double y_min = -1.829; 
     double z_min = -1.219;
