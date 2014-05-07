@@ -257,16 +257,16 @@ public:
         Surface *tube = new RectangularTube(height,
                                             width,
 									        extrude_length,
-                                            true);
+                                            false);
         add_non_lifting_surface(*tube);
         allocated_surfaces.push_back(tube);
-        /*
+
         Surface *tube_outer = new RectangularTube(height*1.1,
                                                   width*1.1,
 									              extrude_length,
-                                                  true);
+                                                  false);
         add_non_lifting_surface(*tube_outer);
-        allocated_surfaces.push_back(tube_outer);*/
+        allocated_surfaces.push_back(tube_outer);
     } 
 };
 
@@ -370,15 +370,15 @@ main (int argc, char **argv)
     
     // Set up velocity field writer
     VTKFieldWriter field_writer;
-    double dx = 0.1;
-    double dy = 0.1;
-    double dz = 0.1;
+    int nx = 1;
+    int ny = 21;
+    int nz = 11;
     double x_min = 1.0; 
-    double y_min = -1.9; 
-    double z_min = -1.3;
-    double x_max = 1.1; 
-    double y_max = 1.9; 
-    double z_max = 1.3;
+    double y_min = -1.829; 
+    double z_min = -1.219;
+    double x_max = 1.2; 
+    double y_max = 1.829; 
+    double z_max = 1.219;
     string save_subdir = save_dir + string("/velocity");
     mkdir(save_subdir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     
@@ -387,8 +387,8 @@ main (int argc, char **argv)
     save_subdir = save_dir + string("/performance.txt");
     f.open(save_subdir.c_str());
     
-    // Run simulation:
-    double t = 0.0;
+    // Run simulation: 
+    double t = 0.0; 
     double dt = 0.02; // Was 0.0033
     int step_number = 0;
     
@@ -415,7 +415,7 @@ main (int argc, char **argv)
                                           x_min, x_max,
                                           y_min, y_max,
                                           z_min, z_max,
-                                          dx, dy, dz);
+                                          nx, ny, nz);
         
         // Rotate blades:
         vawt.rotate(dt);
