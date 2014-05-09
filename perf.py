@@ -3,8 +3,14 @@
 from __future__ import division, print_function
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
-t, cp = np.loadtxt("rvat-log-walls/performance.txt", unpack=True)
+if len(sys.argv) > 0:
+    case = sys.argv[1]
+else:
+    case = "free"
+
+t, cp = np.loadtxt("rvat-log-"+case+"/performance.txt", unpack=True)
 
 with open("rvat.cpp") as f:
     for line in f.readlines():
