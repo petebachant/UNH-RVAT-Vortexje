@@ -21,7 +21,7 @@ using namespace Vortexje;
 
 #define N_BLADES        3
 #define MILL_RADIUS     0.5
-#define TIP_SPEED_RATIO 3.6
+#define TIP_SPEED_RATIO 1.9
 #define WIND_VELOCITY   1.0
 #define INCLUDE_TOWER
 #define INCLUDE_WALLS
@@ -227,21 +227,20 @@ public:
                  
             vector<int> nodes = surface_builder.create_nodes_for_points(points);
             
-            if (i > 0)
-                vector<int> airfoil_panels = surface_builder.create_panels_between_shapes(nodes, prev_nodes);
+            if (i > 0) {          
+                vector<int> airfoil_panels;
+                
+                if (external_flow)
+                    airfoil_panels = surface_builder.create_panels_between_shapes(prev_nodes, nodes);
+                else
+                    airfoil_panels = surface_builder.create_panels_between_shapes(nodes, prev_nodes);
+            }
                 
             prev_nodes = nodes;
         }
 
         surface_builder.finish();
         
-        // Translate into the canonical coordinate system:
-        //Vector3d translation(0.0, 0.0, -h / 2.0);
-        //translate(translation);
-        
-        // Flip normals if external_flow is false:
-        if (external_flow == false)
-            flip_normals();
     }
 };
 
@@ -260,14 +259,14 @@ public:
                                             false);
         add_non_lifting_surface(*tube);
         allocated_surfaces.push_back(tube);
-/*
+
         Surface *tube_outer = new RectangularTube(height*1.1,
                                                   width*1.1,
 									              extrude_length,
-                                                  false);
+                                                  true);
         add_non_lifting_surface(*tube_outer);
         allocated_surfaces.push_back(tube_outer);
-*/
+
     } 
 };
 
