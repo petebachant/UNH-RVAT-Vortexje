@@ -21,7 +21,7 @@ using namespace Vortexje;
 
 #define N_BLADES        3
 #define MILL_RADIUS     0.5
-#define TIP_SPEED_RATIO 1.9
+#define TIP_SPEED_RATIO 3.6
 #define WIND_VELOCITY   1.0
 #define INCLUDE_TOWER
 #define INCLUDE_WALLS
@@ -260,13 +260,14 @@ public:
                                             false);
         add_non_lifting_surface(*tube);
         allocated_surfaces.push_back(tube);
-
+/*
         Surface *tube_outer = new RectangularTube(height*1.1,
                                                   width*1.1,
 									              extrude_length,
                                                   false);
         add_non_lifting_surface(*tube_outer);
         allocated_surfaces.push_back(tube_outer);
+*/
     } 
 };
 
@@ -346,7 +347,7 @@ main (int argc, char **argv)
               MILL_RADIUS,
               N_BLADES,
               position,
-              M_PI / 6.0,
+              0.0,
               TIP_SPEED_RATIO * WIND_VELOCITY / MILL_RADIUS);
     
     // Set up solver:

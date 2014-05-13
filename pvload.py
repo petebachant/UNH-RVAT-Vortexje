@@ -8,10 +8,7 @@ try:
 except ImportError:
     pvloaded = False
 
-if len(sys.argv) > 0:
-    casename = sys.argv[1]
-else:
-    casename = "free"
+casename = "free"
 
 for f in ["turbine", "walls"]:
     wd = "rvat-log-" + casename + "/" + f
