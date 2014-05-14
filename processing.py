@@ -159,7 +159,7 @@ def plotwake(plotlist=["meanu"], t1=1.5, case="free", save=False,
         # Add contours of mean velocity
         cs = plt.contourf(y_R, z_H, u, 20, cmap=plt.cm.coolwarm)
         cb = plt.colorbar(cs, shrink=1, extend='both', 
-                          orientation='horizontal', pad=0.1)
+                          orientation='horizontal', pad=0.12)
         cb.set_label(r'$U/U_{\infty}$')
         plt.hold(True)
         # Make quiver plot of v and w velocities
@@ -170,9 +170,9 @@ def plotwake(plotlist=["meanu"], t1=1.5, case="free", save=False,
         #plt.xlim(-3.2, 3.2)
         #plt.ylim(-1.22, 1.22)
         #plt.xlim(-3.66, 3.66)
-        plt.ylim(-1.4, 1.4)
-        plt.xlim(-4, 4)
-        plt.quiverkey(Q, 0.75, 0.21, 0.1, r'$0.1 U_\infty$',
+        #plt.ylim(-1.4, 1.4)
+        #plt.xlim(-4, 4)
+        plt.quiverkey(Q, 0.75, 0.22, 0.1, r'$0.1 U_\infty$',
                    labelpos='E',
                    coordinates='figure',
                    fontproperties={'size': 'small'})
@@ -189,7 +189,7 @@ def plotwake(plotlist=["meanu"], t1=1.5, case="free", save=False,
         #plt.yticks([0,0.13,0.25,0.38,0.5,0.63])
         styleplot()
         if save:
-            plt.savefig(savepath+"\\meancomboquiv_Vortexje"+savetype)
+            plt.savefig(savepath+"\\meancomboquiv_Vortexje_" + case +savetype)
     plt.show()
     
 def perf(case="free", plot=True):
@@ -227,13 +227,13 @@ def main():
         p = "C:/Users/Pete/" + p
     plt.close("all")
     
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         case = sys.argv[1]
     else:
         case = "free"
     
-    plotwake(plotlist=["meancomboquiv"], t1=1, case=case, 
-             save=False, savepath=p)
+    plotwake(plotlist=["meancomboquiv"], t1=3, case=case, 
+             save=True, savepath=p)
     #perf(case)
 
 if __name__ == "__main__":
