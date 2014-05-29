@@ -255,14 +255,15 @@ public:
         
         Surface *tube = new RectangularTube(height,
                                             width,
-									        extrude_length,
+					    extrude_length,
                                             false);
         add_non_lifting_surface(*tube);
         allocated_surfaces.push_back(tube);
 
+
         Surface *tube_outer = new RectangularTube(height*1.1,
                                                   width*1.1,
-									              extrude_length,
+						  extrude_length,
                                                   true);
         add_non_lifting_surface(*tube_outer);
         allocated_surfaces.push_back(tube_outer);
@@ -374,11 +375,11 @@ main (int argc, char **argv)
     int ny = 41;
     int nz = 21;
     double x_min = 1.0; 
-    double y_min = -1.829; 
-    double z_min = -1.219;
+    double y_min = -1.83; 
+    double z_min = -1.22;
     double x_max = 1.2; 
-    double y_max = 1.829; 
-    double z_max = 1.219;
+    double y_max = 1.83; 
+    double z_max = 1.22;
     string save_subdir = save_dir + string("/velocity");
     mkdir(save_subdir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     
@@ -411,11 +412,20 @@ main (int argc, char **argv)
         // Write velocity field:
         stringstream velfilename;
         velfilename << save_dir << "/velocity/" << t << ".vtk";
+        #ifdef INCLUDE_WALLS
+        field_writer.write_velocity_field_surf(solver, velfilename.str(), 
+                                               x_min, x_max,
+                                               y_min, y_max,
+                                               z_min, z_max,
+                                               nx, ny, nz,
+                                               walls.non_lifting_surfaces[0]->surface);
+        #else
         field_writer.write_velocity_field(solver, velfilename.str(), 
                                           x_min, x_max,
                                           y_min, y_max,
                                           z_min, z_max,
                                           nx, ny, nz);
+        #endif
         
         // Rotate blades:
         vawt.rotate(dt);
